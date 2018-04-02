@@ -30,7 +30,9 @@ export class PlaygroundComponent implements OnInit {
   resName: String = '';
   funcARN: String;
   notYetLoaded: Boolean = true;
-  errMsg: String = '';
+  errMsgLoad: String = '';
+  errMsgSave: String = '';
+  wasCallSuccess: Boolean = false;
 
   constructor(private taggerService: TaggerService) {
     console.log('I am in constructor')
@@ -63,8 +65,7 @@ export class PlaygroundComponent implements OnInit {
       this.loadPastTags();
     }
     this.loadButtonText = "Loading";
-    this.errMsg = "";
-    this.tags = [];
+    this.resetPlayground()
     // const thisObject = this;
     this.taggerService.getLambdaConfig(this.resName)
       .then(config => {
@@ -87,19 +88,24 @@ export class PlaygroundComponent implements OnInit {
             this.loadButtonText = "Load";
           })
           .catch(error => {
-            this.handleError(error)
+            this.handleErrorInLoad(error)
           });
       })
       .catch(error => {
-        this.handleError(error)
+        this.handleErrorInLoad(error)
       });
   }
 
-  handleError(error) {
+  handleErrorInLoad(error) {
     console.log("Promise failed " + error);
     this.loadButtonText = "Load";
+    this.errMsgLoad = error;
+  }
+
+  handleErrorInSave(error) {
+    console.log("Promise failed " + error);
     this.saveButtonText = "Save"
-    this.errMsg = error;
+    this.errMsgSave = error;
   }
 
   updatePastTagsAndPersists() {
@@ -123,16 +129,19 @@ export class PlaygroundComponent implements OnInit {
   }
 
   saveLambdaTags() {
-    this.saveButtonText = "Saving"
+    this.initCall()
     this.updatePastTagsAndPersists();
     this.taggerService.writeTagsToLambda(this.funcARN, this.tags)
       .then(response => {
-        this.saveButtonText = "Save"
+        this.unsetLambdaTags()
       })
       .catch(error => {
-        this.handleError(error)
+        this.handleErrorInSave(error)
       });
-    // time to unset removed tags
+  }
+
+  unsetLambdaTags(){
+    // collect tags  to unset
     var removedTagsKeys: String[] = [];
     this.cloudTags.forEach(cloudTag => {
       var seen = false;
@@ -148,19 +157,37 @@ export class PlaygroundComponent implements OnInit {
         removedTagsKeys.push(cloudTag.name)
       }
     });
+
+    //Check and send the call
     if(removedTagsKeys.length > 0 ){
       this.taggerService.removeTagsFromLambda(this.funcARN, removedTagsKeys)
       .then(response => {
-        this.saveButtonText = "Save"
+        this.completeOperation()
       })
       .catch(error => {
-        this.handleError(error)
+        this.handleErrorInSave(error)
       });
+    } else{
+      this.completeOperation()
     }
+  }
+
+  initCall(){
+    this.saveButtonText = "Saving"
+    this.wasCallSuccess = false;
+  }
+  completeOperation(){
+    this.saveButtonText = "Save"
+    this.wasCallSuccess = true;
     this.dumpTagsArrToCloudArr();
   }
 
-
+  resetPlayground(){
+    this.errMsgLoad='';
+    this.wasCallSuccess=false;
+    this.tags = [];
+    this.cloudTags=[];
+  }
 
   addTagRow(name: string, value: string) {
     var tag: Tag = new Tag();
@@ -216,7 +243,7 @@ export class PlaygroundComponent implements OnInit {
   }
 
   isWorkingState() {
-    if (this.errMsg
+    if (this.errMsgLoad
       || this.loadButtonText == "Loading"
       || !this.resName
       || this.notYetLoaded) {

@@ -2,35 +2,43 @@
 
   <div class="row" id="bootstrap-row">
     <div class="col-md-4 panel">
-      <div class="col-md-12 inner-panel opaque-black scroll-panel">
-        <!-- <div *ngIf="resourceName == 'Lambda'">
-          Its Lambda
-        </div> -->
-        <form>
-          <div class="form-group">
-            <label for="lambda">{{ resourceName }} Name:</label>
-            <input class="form-control " id="lambda" [(ngModel)]="resName" name="resNameEditBox">
+      <div class="col-md-12 scroll-panel">
+        <!-- <div *ngIf="resourceName == 'Lambda'"> Its Lambda </div> -->
+        <div class="row">
+          <div class="col-md-12 opaque-black inner-panel">
+            <form>
+              <div class="form-group">
+                <label for="lambda">{{ resourceName }} Name:</label>
+                <input class="form-control " id="lambda" [(ngModel)]="resName" name="resNameEditBox">
+              </div>
+              <button [disabled]="!resName" type="submit" class="btn btn-default" (click)="loadLambdaTags()">
+                {{ loadButtonText }}
+                <span *ngIf="loadButtonText == 'Loading'">
+                  <i class="fa fa-spinner fa-spin"></i>
+                </span>
+              </button>
+            </form>
           </div>
-          <button [disabled]="!resName" type="submit" class="btn btn-default" (click)="loadLambdaTags()">
-            {{ loadButtonText }}
-            <span *ngIf="loadButtonText == 'Loading'">
-              <i class="fa fa-spinner fa-spin"></i>
-            </span>
-          </button>
-          <br>
-          <div class="alert alert-danger" *ngIf="errMsg">
-            {{errMsg}}
-            <!-- <p class="small">> click to dismiss</p> -->
+        </div>
+        <div class="row" style="margin-top: 20px">
+          <div class="col-md-12 opaque-black inner-panel" *ngIf="errMsgLoad">
+            <div class="alert alert-danger">{{errMsgLoad}}</div>
           </div>
-        </form>
+          <div class="col-md-12 opaque-black inner-panel" *ngIf="errMsgSave">
+              <div class="alert alert-danger">{{errMsgSave}}</div>
+            </div>
+          <div class="col-md-12 opaque-black inner-panel" *ngIf="wasCallSuccess">
+            <div class="alert alert-success">Congrats! Tags updated in the cloud!</div>
+          </div>
+        </div>
       </div>
     </div>
 
     <div class="col-md-6  panel">
       <div *ngIf="isWorkingState()" class="col-md-12 inner-panel opaque-black">
-        <div >
+        <div>
           <button (click)="addBlankTagRow()" class="btn btn-outline-light btn-sm" style="margin-top: 5px">
-              Add Tag
+            Add Tag
           </button>
           <div *ngIf="tags.length">
             <div class="form-inline">
@@ -68,13 +76,13 @@
       <div *ngIf="isWorkingState()" class="col-md-12 inner-panel opaque-black scroll-panel">
         History
         <div *ngIf="pastTags.length" style="margin-top: 15px">
-            <div class="form-group">
-                <div class="form-inline" *ngFor="let tag of pastTags; let i=index">
-                  <button [disabled]="checkAlreadyUsed(tag)" (click)="addTagRow(tag.name,tag.value)" class="btn btn-outline-light btn-sm" style="margin-top: 10px">
-                      {{tag.name}}
-                  </button>
-                </div>
-              </div>          
+          <div class="form-group">
+            <div class="form-inline" *ngFor="let tag of pastTags; let i=index">
+              <button [disabled]="checkAlreadyUsed(tag)" (click)="addTagRow(tag.name,tag.value)" class="btn btn-outline-light btn-sm" style="margin-top: 10px">
+                {{tag.name}}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

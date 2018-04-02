@@ -52,11 +52,19 @@
     @extend .opaque-white;
 }
 
-.panel {
+#bootstrap-row{
+    width: 100%; /* Set full-width to expand the whole page */
+  }
+
+#bootstrap-row .panel{
+    // padding:0px 15x;
+    color: white;    
 }
+
 .inner-panel{
     padding: 10px;
 }
+
 .scroll-panel{
     overflow-y: auto;
     height:400px;
@@ -99,12 +107,5 @@
   }
 
 
-  #bootstrap-row{
-    width: 100%; /* Set full-width to expand the whole page */
-  }
-
-  #bootstrap-row .panel{
-    // padding:0px 15x;
-    color: white;    
-}
+ 
 
