@@ -1,0 +1,33 @@
+/* You can add global styles to this file, and also import other style files */
+html, body {
+  margin: 0;
+  padding: 0;
+
+  height: 100%;
+  
+}
+
+
+// textarea:hover, 
+// input:hover, 
+// textarea:active, 
+// input:active, 
+// textarea:focus, 
+// input:focus,
+// button:focus,
+// button:active,
+// button:hover,
+// label:focus,
+// .btn:active,
+// .btn.active,
+// .btn:focus, .btn:active:focus, .btn.active:focus
+// {
+//   outline:0px !important;
+//   outline:none;
+//   -webkit-appearance:none;
+//   box-shadow:none;
+//   -webkit-box-shadow: none;
+// }
+.form-control, .form-control-focus {
+  box-shadow: none!important;
+}

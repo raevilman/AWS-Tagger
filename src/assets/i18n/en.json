@@ -1,0 +1,8 @@
+{
+  "PAGES": {
+      "HOME": {
+          "TITLE": "Tagger",
+          "HELLO": "hello {{value}}"
+      }
+  }
+}

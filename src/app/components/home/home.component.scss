@@ -1,0 +1,82 @@
+.main-container {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  // background: url(../../../assets/background.jpg) no-repeat center fixed;
+  // background-color: #7c7c7c;
+  -webkit-background-size: cover; /* pour anciens Chrome et Safari */
+  background-size: cover; /* version standardisée */
+  background: url('../../../assets/images/bg1.png') repeat center center fixed; 
+  color: white;
+  // background-color: burlywood;
+
+
+
+  .sidenav-container {
+    /* When the sidenav is not fixed, stretch the sidenav container to fill the available space. This
+       causes `<mat-sidenav-content>` to act as our scrolling element for desktop layouts. */
+    flex: 1;
+
+    mat-sidenav {
+      flex: 1;
+      // width: 200px;
+      background-color: cornflowerblue;
+    }
+  }
+}
+
+
+.content-container {
+  #resSelector{
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    ul{
+      list-style: none;
+      overflow: hidden;
+      position: relative;
+    }
+    li { 
+      float: left; 
+      margin: 0px 10px;
+      display: block; 
+      width: 120px; 
+      // height: 30px;
+      text-align: center;
+      padding: 10px;
+      
+    }
+    li:hover{
+      background-color: rgba(0,0,0,0.2);
+      // color: s
+      cursor: pointer;
+    }
+    // li:nth-child(1) {
+    //   background-color: #5bb2fc;
+    // }
+    // li:nth-child(2) {
+    //   background-color: #58ebd3;
+    // }
+    // li:nth-child(3) {
+    //   background-color: #ffa659;
+    // }
+    // li:nth-child(4) {
+    //   background-color: #ff7a85;
+    // }
+  
+    .selectedResource{
+      // color: firebrick;
+      background-color: rgba(0,0,0,0.2);
+    }  
+  }
+  
+}
+
+.app-title {
+  margin-left: 20px;
+  text-align: center;
+}

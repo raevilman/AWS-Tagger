@@ -1,0 +1,29 @@
+<div class="main-container">
+  <mat-sidenav-container class="sidenav-container" (backdropClick)="close('backdrop')">
+    <mat-sidenav #sidenav (keydown.escape)="close('escape')" disableClose>
+      <button mat-button (click)="close('toggle button')">
+        <i class="fa fa-times"></i>
+      </button>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <mat-toolbar color="primary" class="toolbar">
+        <button *ngIf="false" (click)="sidenav.open()">
+          <i class="fa fa-bars"></i>
+        </button>
+        <h1 class="app-title">{{ 'PAGES.HOME.TITLE' | translate }}</h1>
+      </mat-toolbar>
+
+      <div class="content-container">
+        <div id="resSelector">
+          <ul>
+            <li *ngFor="let resource of resources" [class.selectedResource]="resource === selectedRes" (click)="onResSelect(resource)">{{ resource }}</li>
+          </ul>
+        </div>
+        <br>
+
+        <app-playground *ngIf="selectedRes" [resourceName]="selectedRes"></app-playground>
+      </div>
+
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

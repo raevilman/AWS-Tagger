@@ -1,0 +1,110 @@
+/// Mixin to customize scrollbars
+/// Beware, this does not work in all browsers
+/// @author Hugo Giraudel
+/// @param {Length} $size - Horizontal scrollbar's height and vertical scrollbar's width
+/// @param {Color} $foreground-color - Scrollbar's color
+/// @param {Color} $background-color [mix($primary, white, 75%)] - Scrollbar's color
+/// @example scss - Scrollbar styling
+///   @include scrollbars(.5em, slategray);
+@mixin scrollbars($size, $foreground-color, $background-color: mix($foreground-color, white, 50%)) {
+    ::-webkit-scrollbar {
+        width:  $size;
+        height: $size;
+    }
+  
+    ::-webkit-scrollbar-thumb {
+        background: $foreground-color;
+    }
+  
+    ::-webkit-scrollbar-track {
+        background: $background-color;
+    }
+  
+    // For Internet Explorer
+    body {
+      scrollbar-face-color: $foreground-color;
+      scrollbar-track-color: $background-color;
+    }
+  }
+  
+  @include scrollbars(.5em, rgba(0,0,0,0.2));
+
+
+
+
+
+
+
+
+  .opaque-black{
+    background:rgba(0,0,0,0.2);
+}
+
+.opaque-white{
+    background:rgba(255,255,255,0.2);
+}
+
+.material-input{
+    border-top-color: transparent;
+    border-right-color: transparent;
+    border-left-color: transparent;
+    background-color: transparent;
+    @extend .opaque-white;
+}
+
+.panel {
+}
+.inner-panel{
+    padding: 10px;
+}
+.scroll-panel{
+    overflow-y: auto;
+    height:400px;
+}
+
+.scroll-tags-panel{
+    @extend .scroll-panel;
+    height:250px;
+}
+
+.alert-danger{
+    margin: 20px;
+}
+
+.tagRemoveBtn{
+    @extend .opaque-white;
+    color: white;
+}
+.tagBox{
+    @extend .material-input;
+
+    margin: 10px;
+    color: white;
+    
+}
+.tagBoxTitle{
+    color: white;
+    margin: 10px;
+    border: none;
+    border-color: transparent;
+    background-color: transparent;
+}
+
+.ng-valid[required], .ng-valid.required  {
+    border-left: 5px solid #42A948; /* green */
+  }
+  
+  .ng-invalid:not(form)  {
+    border-left: 5px solid #a94442; /* red */
+  }
+
+
+  #bootstrap-row{
+    width: 100%; /* Set full-width to expand the whole page */
+  }
+
+  #bootstrap-row .panel{
+    // padding:0px 15x;
+    color: white;    
+}
+
