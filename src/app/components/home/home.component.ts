@@ -1,6 +1,8 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit} from '@angular/core';
 import {MatSidenav} from '@angular/material/sidenav';
 // import {MatIconModule} from '@angular/material/icon';
+import { RES_TYPE } from "../../model/res-types";
+import { PlaygroundComponent } from '../playground/playground.component';
 
 
 @Component({
@@ -11,24 +13,44 @@ import {MatSidenav} from '@angular/material/sidenav';
 export class HomeComponent implements OnInit {
 
   param = {value: 'world'};
-  resources = ['Lambda','EC2','API Gateway', 'DynamoDb'];
-  selectedRes: String;
-
+  resources = [];
+  selectedRes: String = RES_TYPE.API_Gateway;
   
+  constructor() { 
+    Object.keys(RES_TYPE).forEach(key => {
+      this.resources.push(RES_TYPE[key])
+    })
+  }
+  @ViewChild('sidenav') sidenav: MatSidenav;
+  @ViewChild(PlaygroundComponent) 
+  private playground: PlaygroundComponent;
 
-  constructor() { }
-  
-  ngOnInit() {
+  displayPlaygroundBool:boolean = false;
+
+  displayPlayground() {
+    if(this.displayPlaygroundBool) {
+      return "block";
+    } else {
+      return "none";
+    }
   }
 
-  @ViewChild('sidenav') sidenav: MatSidenav;
+  ngOnInit() {
+  }
+  ngAfterViewInit() {
+    this.onResSelect = (res:String)=>{
+      this.selectedRes = res;
+      this.playground.changeGround(RES_TYPE[''+this.selectedRes])
+      this.displayPlaygroundBool = true      
+    }
+  }
 
   close(reason: string) {
-    console.log('Closed due to: '+reason);
+    // console.log('Closed due to: '+reason);
     this.sidenav.close();
   }
 
   onResSelect(res: String): void {
-    this.selectedRes = res;
+    
   }
 }

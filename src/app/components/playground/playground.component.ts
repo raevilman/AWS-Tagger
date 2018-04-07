@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { TaggerService } from '../../providers/tagger.service'
 import { Tag } from '../../model/tag'
+import { RES_TYPE } from '../../model/res-types';
 const storage = window.require('electron-json-storage');
 const storageKey = 'AwsOne.db';
 
@@ -12,7 +13,9 @@ const storageKey = 'AwsOne.db';
 })
 export class PlaygroundComponent implements OnInit {
 
-  @Input() resourceName: String;
+ resourceType: String;
+
+  resLabel: String;
 
   loadButtonText: String = "Load";
   saveButtonText: String = "Save";
@@ -23,73 +26,96 @@ export class PlaygroundComponent implements OnInit {
   //where I have removed one tag which is sitting there in the cloud then 
   //I need to untag this in separate call bec call/method to set and unset are different.
   cloudTags: Tag[] = [];
-  pastTags: Tag[] = [];
+  tagsHistory: Tag[] = [];
 
   // noTagARN = 'arn:aws:lambda:us-east-1:856095205542:function:API_CONFIG';
   // tagARN = 'arn:aws:lambda:us-east-1:856095205542:function:CICD-Demo';
-  resName: String = '';
-  funcARN: String;
+  resName: string = 'neo-development-territory';
+  funcARN: string;
   notYetLoaded: Boolean = true;
   errMsgLoad: String = '';
   errMsgSave: String = '';
   wasCallSuccess: Boolean = false;
 
   constructor(private taggerService: TaggerService) {
-    console.log('I am in constructor')
+    this.processResourceLabel()
+  }
+
+  processResourceLabel(){
+    switch(this.resourceType){
+      case RES_TYPE.API_Gateway:{
+        this.resLabel = 'API'
+        break;
+      }
+
+      case RES_TYPE.DynamoDb:{
+        this.resLabel = 'Table'
+        break;
+      }
+
+      case RES_TYPE.EC2:{
+        this.resLabel = 'Instance'
+        break;
+      }
+
+      case RES_TYPE.Lambda:{
+        this.resLabel = 'Function'
+        break;
+      }
+
+      case RES_TYPE.S3:{
+        this.resLabel = 'Bucket'
+        break;
+      }
+
+      
+    }
   }
 
   ngOnInit() {
-    console.log('I am in ngInit')
   }
 
-  loadPastTags() {
+  changeGround(selectedMenu: RES_TYPE)  {
+    this.resourceType = selectedMenu
+    this.resetPlayground()
+    this.processResourceLabel()
+    this.taggerService.setResourceType(selectedMenu)
+  }
+
+  loadTagsHistory() {
     const thisObject = this;
     storage.get(storageKey, function (error, data) {
       if (error) throw error;
-      thisObject.pastTags = [];
+      thisObject.tagsHistory = [];
       if (Object.keys(data).length > 0) {
         Object.keys(data).forEach(key => {
           // console.log( + data[key].value)
           thisObject.addPastTagRow(data[key].name, data[key].value)
         });
       }
-      console.log('after loading logs');
-      console.log(thisObject.pastTags);
     });
   }
 
   loadLambdaTags() {
+    this.resetPlayground()
     this.notYetLoaded = false;
-    var pastTagsCount = this.pastTags.length
-    if (pastTagsCount < 1) {
-      this.loadPastTags();
+    if(this.tagsHistory.length < 1) {
+      this.loadTagsHistory();
     }
     this.loadButtonText = "Loading";
-    this.resetPlayground()
     // const thisObject = this;
-    this.taggerService.getLambdaConfig(this.resName)
-      .then(config => {
-        this.funcARN = config['FunctionArn'];
-        console.log('funcARN is ' + this.funcARN)
-        this.taggerService.getLambdaTags(this.funcARN)
-          .then(awsTags => {
-            awsTags = awsTags['Tags'];
-            var tagsCount = Object.keys(awsTags).length;
-            if (tagsCount > 0) {
-              Object.keys(awsTags).forEach(key => {
-                this.tags.push({ name: key, value: awsTags[key] });
-              });
-              this.dumpTagsArrToCloudArr()
-              console.log(this.cloudTags)
-              
-            } else {
-              console.log('Tags not found!')
-            }
-            this.loadButtonText = "Load";
-          })
-          .catch(error => {
-            this.handleErrorInLoad(error)
-          });
+    this.taggerService.translareNameToARN(this.resName)
+      .then(arn => {
+        this.funcARN = arn
+        return arn;
+      })
+      .then(arn=>{
+        return this.taggerService.getTags(this.funcARN)
+      })
+      .then(_tags=>{
+        this.tags = _tags
+        this.dumpTagsArrToCloudArr()
+        this.loadButtonText = "Load";
       })
       .catch(error => {
         this.handleErrorInLoad(error)
@@ -108,10 +134,10 @@ export class PlaygroundComponent implements OnInit {
     this.errMsgSave = error;
   }
 
-  updatePastTagsAndPersists() {
+  updateTagsHistoryAndPersists() {
     this.tags.forEach(tag => {
       var seen = false;
-      this.pastTags.every(function (pastTag, index) {
+      this.tagsHistory.every(function (pastTag, index) {
         if (pastTag.name == tag.name) {
           seen = true;
           pastTag.value = tag.value;
@@ -123,15 +149,15 @@ export class PlaygroundComponent implements OnInit {
         this.addPastTagRow(tag.name, tag.value);
       }
     });
-    storage.set(storageKey, this.pastTags, function (error) {
+    storage.set(storageKey, this.tagsHistory, function (error) {
       if (error) throw error;
     });
   }
 
   saveLambdaTags() {
     this.initCall()
-    this.updatePastTagsAndPersists();
-    this.taggerService.writeTagsToLambda(this.funcARN, this.tags)
+    this.updateTagsHistoryAndPersists();
+    this.taggerService.putTags(this.funcARN, this.tags)
       .then(response => {
         this.unsetLambdaTags()
       })
@@ -142,7 +168,7 @@ export class PlaygroundComponent implements OnInit {
 
   unsetLambdaTags(){
     // collect tags  to unset
-    var removedTagsKeys: String[] = [];
+    var removedTagsKeys: string[] = [];
     this.cloudTags.forEach(cloudTag => {
       var seen = false;
       this.tags.every(function (tag, index) {
@@ -160,7 +186,7 @@ export class PlaygroundComponent implements OnInit {
 
     //Check and send the call
     if(removedTagsKeys.length > 0 ){
-      this.taggerService.removeTagsFromLambda(this.funcARN, removedTagsKeys)
+      this.taggerService.deleteTags(this.funcARN, removedTagsKeys)
       .then(response => {
         this.completeOperation()
       })
@@ -187,6 +213,7 @@ export class PlaygroundComponent implements OnInit {
     this.wasCallSuccess=false;
     this.tags = [];
     this.cloudTags=[];
+    this.notYetLoaded=true
   }
 
   addTagRow(name: string, value: string) {
@@ -200,7 +227,7 @@ export class PlaygroundComponent implements OnInit {
     var tag: Tag = new Tag();
     tag.name = name;
     tag.value = value;
-    this.pastTags.push(tag);
+    this.tagsHistory.push(tag);
   }
 
   dumpTagsArrToCloudArr(){
@@ -208,8 +235,6 @@ export class PlaygroundComponent implements OnInit {
     this.tags.forEach(element => {
       this.cloudTags.push(this.cloneTagObject(element))
     });
-    console.log('copying finishes')
-    console.log(this.cloudTags)
   }
 
   cloneTagObject(p_tag:Tag):Tag{

@@ -16,12 +16,11 @@
       <div class="content-container">
         <div id="resSelector">
           <ul>
-            <li *ngFor="let resource of resources" [class.selectedResource]="resource === selectedRes" (click)="onResSelect(resource)">{{ resource }}</li>
+            <li *ngFor="let resource of resources" [class.selectedResource]="resource === selectedRes && displayPlaygroundBool" (click)="onResSelect(resource)">{{ resource }}</li>
           </ul>
         </div>
         <br>
-
-        <app-playground *ngIf="selectedRes" [resourceName]="selectedRes"></app-playground>
+        <app-playground [style.display]="displayPlayground()" #playground></app-playground>
       </div>
 
     </mat-sidenav-content>

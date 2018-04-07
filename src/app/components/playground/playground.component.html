@@ -3,12 +3,12 @@
   <div class="row" id="bootstrap-row">
     <div class="col-md-4 panel">
       <div class="col-md-12 scroll-panel">
-        <!-- <div *ngIf="resourceName == 'Lambda'"> Its Lambda </div> -->
+        <!-- <div *ngIf="resourceType == 'Lambda'"> Its Lambda </div> -->
         <div class="row">
           <div class="col-md-12 opaque-black inner-panel">
             <form>
               <div class="form-group">
-                <label for="lambda">{{ resourceName }} Name:</label>
+                <label for="lambda">{{ resLabel }} Name:</label>
                 <input class="form-control " id="lambda" [(ngModel)]="resName" name="resNameEditBox">
               </div>
               <button [disabled]="!resName" type="submit" class="btn btn-default" (click)="loadLambdaTags()">
@@ -75,9 +75,9 @@
     <div class="col-md-2 panel">
       <div *ngIf="isWorkingState()" class="col-md-12 inner-panel opaque-black scroll-panel">
         History
-        <div *ngIf="pastTags.length" style="margin-top: 15px">
+        <div *ngIf="tagsHistory.length" style="margin-top: 15px">
           <div class="form-group">
-            <div class="form-inline" *ngFor="let tag of pastTags; let i=index">
+            <div class="form-inline" *ngFor="let tag of tagsHistory; let i=index">
               <button [disabled]="checkAlreadyUsed(tag)" (click)="addTagRow(tag.name,tag.value)" class="btn btn-outline-light btn-sm" style="margin-top: 10px">
                 {{tag.name}}
               </button>

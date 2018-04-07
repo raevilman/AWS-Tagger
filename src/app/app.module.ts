@@ -25,8 +25,13 @@ import { WebviewDirective } from './directives/webview.directive';
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
-import { TaggerService } from './providers/tagger.service';
 import { PlaygroundComponent } from './components/playground/playground.component';
+
+//Services
+import { TaggerService } from './providers/tagger.service';
+import { AwsClientsService } from "./providers/aws-clients.service";
+import { TagLambdaService } from "./providers/tag-lambda.service";
+import { TagS3Service } from "./providers/tag-s3.service";
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -57,7 +62,7 @@ export function HttpLoaderFactory(http: HttpClient) {
       }
     })
   ],
-  providers: [ElectronService, TaggerService],
+  providers: [ElectronService, TaggerService, AwsClientsService, TagLambdaService, TagS3Service],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
