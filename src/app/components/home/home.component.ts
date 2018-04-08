@@ -14,7 +14,7 @@ export class HomeComponent implements OnInit {
 
   param = {value: 'world'};
   resources = [];
-  selectedRes: String = RES_TYPE.API_Gateway;
+  selectedRes: String = RES_TYPE.DynamoDb;
   
   constructor() { 
     Object.keys(RES_TYPE).forEach(key => {

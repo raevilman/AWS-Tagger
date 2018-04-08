@@ -41,10 +41,10 @@ export class PlaygroundComponent implements OnInit {
 
   processResourceLabel(){
     switch(this.resourceType){
-      case RES_TYPE.API_Gateway:{
-        this.resLabel = 'API'
-        break;
-      }
+      // case RES_TYPE.API_Gateway:{
+      //   this.resLabel = 'API'
+      //   break;
+      // }
 
       case RES_TYPE.DynamoDb:{
         this.resLabel = 'Table'

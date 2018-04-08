@@ -3,6 +3,7 @@ import { TagLambdaService } from "./tag-lambda.service";
 import { TagS3Service } from "./tag-s3.service";
 import { TagEc2Service } from "./tag-ec2.service";
 import { TagDynamodbService } from "./tag-dynamodb.service";
+import { TagApiGatewayService } from "./tag-api-gateway.service";
 import { Tag } from '../model/tag'
 import { ITagger } from "./ITagger";
 import { RES_TYPE } from '../model/res-types';
@@ -16,7 +17,8 @@ export class TaggerService {
     private lambdaTagger:TagLambdaService,
     private s3Tagger:TagS3Service,
     private ec2Tagger: TagEc2Service,
-    private dynamoDbTagger: TagDynamodbService) { }
+    private dynamoDbTagger: TagDynamodbService,
+    private apiGatewayTagger: TagApiGatewayService) { }
   
   resType: RES_TYPE = RES_TYPE.Lambda
 
@@ -42,10 +44,9 @@ export class TaggerService {
         return this.dynamoDbTagger;
       }
 
-      case RES_TYPE.API_Gateway:{
-
-        break;
-      }
+      // case RES_TYPE.API_Gateway:{
+      //   return this.apiGatewayTagger;
+      // }
     }
   }
 
