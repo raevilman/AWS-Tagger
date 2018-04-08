@@ -28,7 +28,7 @@ export class PlaygroundComponent implements OnInit {
   cloudTags: Tag[] = [];
   tagsHistory: Tag[] = [];
 
-  resName: string = '';
+  resName: string = 'BCL_CONFIGS';
   funcARN: string;
   notYetLoaded: Boolean = true;
   errMsgLoad: String = '';
@@ -104,13 +104,18 @@ export class PlaygroundComponent implements OnInit {
     // const thisObject = this;
     this.taggerService.translareNameToARN(this.resName)
       .then(arn => {
+        console.log('ARN is ')
+        console.log(arn)
         this.funcARN = arn
         return arn;
       })
       .then(arn=>{
+        console.log('Calling getTags')
         return this.taggerService.getTags(this.funcARN)
       })
       .then(_tags=>{
+        console.log('Got Tags')
+        console.log(_tags)
         this.tags = _tags
         this.dumpTagsArrToCloudArr()
         this.loadButtonText = "Load";

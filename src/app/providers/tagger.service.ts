@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { TagLambdaService } from "./tag-lambda.service";
 import { TagS3Service } from "./tag-s3.service";
 import { TagEc2Service } from "./tag-ec2.service";
+import { TagDynamodbService } from "./tag-dynamodb.service";
 import { Tag } from '../model/tag'
 import { ITagger } from "./ITagger";
 import { RES_TYPE } from '../model/res-types';
@@ -14,7 +15,8 @@ export class TaggerService {
   constructor(
     private lambdaTagger:TagLambdaService,
     private s3Tagger:TagS3Service,
-    private ec2Tagger: TagEc2Service) { }
+    private ec2Tagger: TagEc2Service,
+    private dynamoDbTagger: TagDynamodbService) { }
   
   resType: RES_TYPE = RES_TYPE.Lambda
 
@@ -37,8 +39,7 @@ export class TaggerService {
       }
 
       case RES_TYPE.DynamoDb:{
-
-        break;
+        return this.dynamoDbTagger;
       }
 
       case RES_TYPE.API_Gateway:{
