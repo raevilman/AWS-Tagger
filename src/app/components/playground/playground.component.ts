@@ -28,9 +28,7 @@ export class PlaygroundComponent implements OnInit {
   cloudTags: Tag[] = [];
   tagsHistory: Tag[] = [];
 
-  // noTagARN = 'arn:aws:lambda:us-east-1:856095205542:function:API_CONFIG';
-  // tagARN = 'arn:aws:lambda:us-east-1:856095205542:function:CICD-Demo';
-  resName: string = 'neo-development-territory';
+  resName: string = '';
   funcARN: string;
   notYetLoaded: Boolean = true;
   errMsgLoad: String = '';
@@ -168,7 +166,7 @@ export class PlaygroundComponent implements OnInit {
 
   unsetLambdaTags(){
     // collect tags  to unset
-    var removedTagsKeys: string[] = [];
+    var tagsToRemove = []
     this.cloudTags.forEach(cloudTag => {
       var seen = false;
       this.tags.every(function (tag, index) {
@@ -180,13 +178,13 @@ export class PlaygroundComponent implements OnInit {
         }
       });
       if (!seen) {
-        removedTagsKeys.push(cloudTag.name)
+        tagsToRemove.push(cloudTag)
       }
     });
 
     //Check and send the call
-    if(removedTagsKeys.length > 0 ){
-      this.taggerService.deleteTags(this.funcARN, removedTagsKeys)
+    if(tagsToRemove.length > 0 ){
+      this.taggerService.deleteTags(this.funcARN, tagsToRemove)
       .then(response => {
         this.completeOperation()
       })

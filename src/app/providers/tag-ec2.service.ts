@@ -4,19 +4,26 @@ import { Tag } from '../model/tag';
 import { AwsClientsService } from './aws-clients.service';
 
 @Injectable()
-export class TagS3Service implements ITagger {
-  constructor(private awsClientService: AwsClientsService) { }
-  s3 = this.awsClientService.getS3Client()
+export class TagEc2Service implements ITagger {
 
+  constructor(private awsClientService: AwsClientsService) { }
+  ec2 = this.awsClientService.getEC2Client()
 
   getTags(resName: string) {
     var params = {
-      Bucket: resName
+      Filters: [
+        {
+          Name: "resource-id",
+          Values: [
+            resName
+          ]
+        }
+      ]
     };
-    return this.s3.getBucketTagging(params)
+    return this.ec2.describeTags(params)
       .promise()
       .then(awsTags => {
-        awsTags = awsTags['TagSet']
+        awsTags = awsTags['Tags'];
         var tagsCount = Object.keys(awsTags).length;
         var tags: Tag[] = [];
         if (tagsCount > 0) {
@@ -26,19 +33,9 @@ export class TagS3Service implements ITagger {
           });
         }
         return tags;
-      });
+      })
   }
   putTags(resName: string, tags: Tag[]) {
-  //   [
-  //     {
-  //    Key: "Key1", 
-  //    Value: "Value1"
-  //   }, 
-  //     {
-  //    Key: "Key2", 
-  //    Value: "Value2"
-  //   }
-  //  ]
     var tagSet = []
     tags.forEach(tag => {
       var tagAr = {}
@@ -47,18 +44,35 @@ export class TagS3Service implements ITagger {
       tagSet.push(tagAr)
     })
     var params = {
-      Bucket: resName, 
-      Tagging: {
-       TagSet: tagSet
-      }
+      Resources: [
+         resName
+      ], 
+      Tags: tagSet
      };
-     return this.s3.putBucketTagging(params)
+     console.log(params)
+     return this.ec2.createTags(params)
       .promise()
   }
   deleteTags(resName: string, tags: Tag[]) {
-    return Promise.resolve(resName)
+    var tagSet = []
+    tags.forEach(tag => {
+      var tagAr = {}
+      tagAr['Key'] = tag.name
+      tagAr['Value'] = tag.value
+      tagSet.push(tagAr)
+    })
+    var params = {
+      Resources: [
+         resName
+      ], 
+      Tags: tagSet
+     };
+     console.log(params)
+     return this.ec2.deleteTags(params)
+      .promise()
   }
   translareNameToARN(resName: string) {
     return Promise.resolve(resName)
   }
+
 }

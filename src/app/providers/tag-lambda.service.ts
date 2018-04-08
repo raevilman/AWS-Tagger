@@ -24,10 +24,14 @@ export class TagLambdaService implements ITagger {
       .promise()
   }
 
-  deleteTags(funcARN: String, tags: String[]): Promise<any> {
+  deleteTags(funcARN: String, tags: Tag[]): Promise<any> {
+    var removedTagsKeys: string[] = [];
+    tags.forEach(tag=>{
+      removedTagsKeys.push(tag.name)
+    })
     var params = {
       Resource: funcARN,
-      TagKeys: tags
+      TagKeys: removedTagsKeys
     };
     return this.lambda.untagResource(params)
       .promise()

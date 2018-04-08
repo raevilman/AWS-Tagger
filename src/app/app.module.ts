@@ -32,6 +32,9 @@ import { TaggerService } from './providers/tagger.service';
 import { AwsClientsService } from "./providers/aws-clients.service";
 import { TagLambdaService } from "./providers/tag-lambda.service";
 import { TagS3Service } from "./providers/tag-s3.service";
+import { TagEc2Service } from "./providers/tag-ec2.service";
+import { TagDynamodbService } from "./providers/tag-dynamodb.service";
+import { TagApiGatewayService } from "./providers/tag-api-gateway.service";
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -62,7 +65,7 @@ export function HttpLoaderFactory(http: HttpClient) {
       }
     })
   ],
-  providers: [ElectronService, TaggerService, AwsClientsService, TagLambdaService, TagS3Service],
+  providers: [ElectronService, TaggerService, AwsClientsService, TagLambdaService, TagS3Service, TagEc2Service, TagDynamodbService, TagApiGatewayService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

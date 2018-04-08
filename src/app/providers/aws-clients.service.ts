@@ -10,6 +10,7 @@ AWS.config.update({
 
 var lambdaClient = new AWS.Lambda();
 var s3Client = new AWS.S3();
+var ec2Client = new AWS.EC2();
 
 @Injectable()
 export class AwsClientsService {
@@ -21,5 +22,5 @@ export class AwsClientsService {
 
   getLambdaClient(){return lambdaClient}
 
-  
+  getEC2Client(){return ec2Client}
 }
